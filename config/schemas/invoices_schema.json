@@ -1,0 +1,99 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Invoice",
+  "description": "Schema for Accounts Receivable invoice records",
+  "type": "object",
+  "required": [
+    "invoice_id",
+    "customer_id",
+    "order_date",
+    "line_items",
+    "total_amount",
+    "currency",
+    "status"
+  ],
+  "properties": {
+    "invoice_id": {
+      "type": "string",
+      "description": "Unique identifier for the invoice",
+      "pattern": "^INV-[0-9]{6,}$"
+    },
+    "customer_id": {
+      "type": "string",
+      "description": "Unique identifier for the customer",
+      "pattern": "^CUST-[0-9]{4,}$"
+    },
+    "order_date": {
+      "type": "string",
+      "description": "Date the order was placed (ISO 8601)",
+      "format": "date"
+    },
+    "due_date": {
+      "type": "string",
+      "description": "Payment due date (ISO 8601)",
+      "format": "date"
+    },
+    "line_items": {
+      "type": "array",
+      "description": "List of line items on the invoice",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["sku", "quantity", "unit_price"],
+        "properties": {
+          "sku": {
+            "type": "string",
+            "description": "Stock keeping unit identifier",
+            "pattern": "^SKU-[A-Z0-9]{4,}$"
+          },
+          "description": {
+            "type": "string",
+            "description": "Human-readable item description"
+          },
+          "quantity": {
+            "type": "integer",
+            "description": "Number of units",
+            "minimum": 1
+          },
+          "unit_price": {
+            "type": "number",
+            "description": "Price per unit in the invoice currency",
+            "minimum": 0
+          },
+          "line_total": {
+            "type": "number",
+            "description": "Total for this line (quantity * unit_price)",
+            "minimum": 0
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "total_amount": {
+      "type": "number",
+      "description": "Total invoice amount",
+      "minimum": 0
+    },
+    "amount_paid": {
+      "type": "number",
+      "description": "Amount paid so far against this invoice",
+      "minimum": 0,
+      "default": 0
+    },
+    "currency": {
+      "type": "string",
+      "description": "ISO 4217 currency code",
+      "enum": ["USD", "EUR", "GBP", "CAD", "AUD", "JPY"]
+    },
+    "status": {
+      "type": "string",
+      "description": "Current invoice status",
+      "enum": ["OPEN", "PARTIAL", "PAID", "OVERDUE", "VOID"]
+    },
+    "notes": {
+      "type": "string",
+      "description": "Optional notes or comments"
+    }
+  },
+  "additionalProperties": false
+}
