@@ -1,0 +1,9 @@
+return_id,original_invoice_id,customer_id,return_date,line_items,reason_code,status,credit_memo_id,notes
+RET-300001,INV-100001,CUST-1001,2024-02-01,"[{""original_sku"": ""SKU-ALPHA001"", ""returned_sku"": ""SKU-ALPHA001"", ""quantity"": 2, ""unit_price"": 25.00}]",DEFECTIVE,REFUNDED,CM-4001,Clean return - matching SKUs
+RET-300002,INV-100002,CUST-1002,2024-02-05,"[{""original_sku"": ""SKU-BETA0002"", ""returned_sku"": ""SKU-GAMM0001"", ""quantity"": 1, ""unit_price"": 150.00}]",WRONG_ITEM,APPROVED,,SKU mismatch detected - different product returned
+RET-300003,INV-100005,CUST-1004,2024-02-08,"[{""original_sku"": ""SKU-EPSL0001"", ""returned_sku"": ""SKU-EPSL0001"", ""quantity"": 1, ""unit_price"": 2500.00}]",NOT_AS_DESCRIBED,PROCESSED,CM-4002,High value clean return
+RET-300004,INV-100007,CUST-1005,2024-02-10,"[{""original_sku"": ""SKU-PRMA0001"", ""returned_sku"": ""SKU-PRMB0001"", ""quantity"": 2, ""unit_price"": 350.00}]",CUSTOMER_CHANGE_OF_MIND,APPROVED,,SKU mismatch - possible substitution PRMA->PRMB
+RET-300005,INV-100003,CUST-1003,2024-02-12,"[{""original_sku"": ""SKU-GAMM0001"", ""returned_sku"": ""SKU-GAMM0001"", ""quantity"": 1, ""unit_price"": 500.00}]",QUALITY_ISSUE,PENDING,,Quality inspection in progress
+RET-300006,INV-100009,CUST-1004,2024-02-14,"[{""original_sku"": ""SKU-ALPHA001"", ""returned_sku"": ""SKU-ZETA0001"", ""quantity"": 5, ""unit_price"": 24.00}]",DUPLICATE_ORDER,APPROVED,,HIGH RISK: wrong SKU category returned
+RET-300007,INV-100006,CUST-1002,2024-02-16,"[{""original_sku"": ""SKU-ZETA0001"", ""returned_sku"": ""SKU-ZETA0001"", ""quantity"": 3, ""unit_price"": 45.00}]",DAMAGED_IN_TRANSIT,REFUNDED,CM-4003,Confirmed shipping damage
+RET-300008,INV-100010,CUST-1005,2024-02-20,"[{""original_sku"": ""SKU-GAMM0001"", ""returned_sku"": ""SKU-DELT0001"", ""quantity"": 1, ""unit_price"": 500.00}]",OTHER,PENDING,,Suspicious return - high value SKU swap

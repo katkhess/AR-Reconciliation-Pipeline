@@ -1,0 +1,100 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ReturnRecord",
+  "description": "Schema for Accounts Receivable return records",
+  "type": "object",
+  "required": [
+    "return_id",
+    "original_invoice_id",
+    "return_date",
+    "line_items",
+    "reason_code",
+    "status"
+  ],
+  "properties": {
+    "return_id": {
+      "type": "string",
+      "description": "Unique identifier for the return",
+      "pattern": "^RET-[0-9]{6,}$"
+    },
+    "original_invoice_id": {
+      "type": "string",
+      "description": "Reference to the original invoice",
+      "pattern": "^INV-[0-9]{6,}$"
+    },
+    "customer_id": {
+      "type": "string",
+      "description": "Unique identifier for the customer",
+      "pattern": "^CUST-[0-9]{4,}$"
+    },
+    "return_date": {
+      "type": "string",
+      "description": "Date return was initiated (ISO 8601)",
+      "format": "date"
+    },
+    "line_items": {
+      "type": "array",
+      "description": "List of returned line items",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["original_sku", "returned_sku", "quantity", "unit_price"],
+        "properties": {
+          "original_sku": {
+            "type": "string",
+            "description": "SKU on the original invoice",
+            "pattern": "^SKU-[A-Z0-9]{4,}$"
+          },
+          "returned_sku": {
+            "type": "string",
+            "description": "SKU of the item actually returned",
+            "pattern": "^SKU-[A-Z0-9]{4,}$"
+          },
+          "quantity": {
+            "type": "integer",
+            "description": "Number of units returned",
+            "minimum": 1
+          },
+          "unit_price": {
+            "type": "number",
+            "description": "Price per unit",
+            "minimum": 0
+          },
+          "notes": {
+            "type": "string",
+            "description": "Notes about this specific return line item"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "reason_code": {
+      "type": "string",
+      "description": "Coded reason for return",
+      "enum": [
+        "DEFECTIVE",
+        "WRONG_ITEM",
+        "NOT_AS_DESCRIBED",
+        "DUPLICATE_ORDER",
+        "CUSTOMER_CHANGE_OF_MIND",
+        "DAMAGED_IN_TRANSIT",
+        "QUALITY_ISSUE",
+        "OTHER"
+      ]
+    },
+    "status": {
+      "type": "string",
+      "description": "Current return status",
+      "enum": ["PENDING", "APPROVED", "REJECTED", "PROCESSED", "REFUNDED"]
+    },
+    "credit_memo_id": {
+      "type": "string",
+      "description": "Reference to the generated credit memo, if any"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Optional notes or comments"
+    }
+  },
+  "additionalProperties": false
+}

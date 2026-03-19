@@ -1,0 +1,129 @@
+version: "3.9"
+
+x-airflow-common: &airflow-common
+  image: apache/airflow:2.8.0-python3.11
+  environment: &airflow-common-env
+    AIRFLOW__CORE__EXECUTOR: LocalExecutor
+    AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
+    AIRFLOW__CORE__FERNET_KEY: "46BKJoQYlPPOexq0OhDZnIlNepKFf87WFwLt0nfdstY="
+    AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: "true"
+    AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+    AIRFLOW__API__AUTH_BACKENDS: "airflow.api.auth.backend.basic_auth"
+    AIRFLOW__WEBSERVER__EXPOSE_CONFIG: "true"
+    # AR Pipeline environment variables
+    DATABASE_URL: postgresql://ar_user:ar_password@postgres:5432/ar_reconciliation
+    S3_BUCKET_RAW: ar-reconciliation-raw
+    S3_BUCKET_PROCESSED: ar-reconciliation-processed
+    AWS_REGION: us-east-1
+    LOG_LEVEL: INFO
+    ENVIRONMENT: dev
+  volumes:
+    - ../dags:/opt/airflow/dags
+    - ../src:/opt/airflow/src
+    - ../config:/opt/airflow/config
+    - ../data:/opt/airflow/data
+    - airflow-logs:/opt/airflow/logs
+  depends_on:
+    postgres:
+      condition: service_healthy
+  networks:
+    - ar-pipeline-net
+
+services:
+
+  # ---- PostgreSQL (local dev database for AR pipeline + Airflow metadata) ----
+  postgres:
+    image: postgres:15-alpine
+    container_name: ar-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_MULTIPLE_DATABASES: ar_reconciliation,airflow
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./init-multiple-db.sh:/docker-entrypoint-initdb.d/init-multiple-db.sh:ro
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - ar-pipeline-net
+
+  # ---- AR Reconciliation Pipeline (one-shot runner) -------------------------
+  pipeline:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: ar-pipeline
+    environment:
+      DATABASE_URL: postgresql://ar_user:ar_password@postgres:5432/ar_reconciliation
+      S3_BUCKET_RAW: ar-reconciliation-raw
+      S3_BUCKET_PROCESSED: ar-reconciliation-processed
+      AWS_REGION: us-east-1
+      LOG_LEVEL: INFO
+      ENVIRONMENT: dev
+    volumes:
+      - ../data:/app/data:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - ar-pipeline-net
+    restart: "no"
+
+  # ---- Airflow webserver -------------------------------------------------------
+  airflow-webserver:
+    <<: *airflow-common
+    container_name: ar-airflow-webserver
+    command: webserver
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
+
+  # ---- Airflow scheduler -------------------------------------------------------
+  airflow-scheduler:
+    <<: *airflow-common
+    container_name: ar-airflow-scheduler
+    command: scheduler
+    healthcheck:
+      test: ["CMD", "airflow", "jobs", "check", "--job-type", "SchedulerJob", "--hostname", "$${HOSTNAME}"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
+
+  # ---- Airflow init (one-shot) -------------------------------------------------
+  airflow-init:
+    <<: *airflow-common
+    container_name: ar-airflow-init
+    entrypoint: /bin/bash
+    command:
+      - -c
+      - |
+        airflow db migrate
+        airflow users create \
+          --username admin \
+          --firstname Admin \
+          --lastname User \
+          --role Admin \
+          --email admin@example.com \
+          --password admin
+    restart: "no"
+
+volumes:
+  postgres-data:
+  airflow-logs:
+
+networks:
+  ar-pipeline-net:
+    driver: bridge
