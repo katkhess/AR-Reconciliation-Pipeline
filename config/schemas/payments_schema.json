@@ -1,0 +1,61 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Payment",
+  "description": "Schema for Accounts Receivable payment records",
+  "type": "object",
+  "required": [
+    "payment_id",
+    "invoice_id",
+    "customer_id",
+    "payment_date",
+    "amount_paid",
+    "payment_method",
+    "status"
+  ],
+  "properties": {
+    "payment_id": {
+      "type": "string",
+      "description": "Unique identifier for the payment",
+      "pattern": "^PMT-[0-9]{6,}$"
+    },
+    "invoice_id": {
+      "type": "string",
+      "description": "Reference to the invoice being paid",
+      "pattern": "^INV-[0-9]{6,}$"
+    },
+    "customer_id": {
+      "type": "string",
+      "description": "Unique identifier for the customer",
+      "pattern": "^CUST-[0-9]{4,}$"
+    },
+    "payment_date": {
+      "type": "string",
+      "description": "Date payment was received (ISO 8601)",
+      "format": "date"
+    },
+    "amount_paid": {
+      "type": "number",
+      "description": "Amount paid in the invoice currency",
+      "minimum": 0.01
+    },
+    "payment_method": {
+      "type": "string",
+      "description": "Method used to make the payment",
+      "enum": ["ACH", "WIRE", "CHECK", "CREDIT_CARD", "DEBIT_CARD", "EFT", "CASH"]
+    },
+    "reference_number": {
+      "type": "string",
+      "description": "External reference number (check number, wire ref, etc.)"
+    },
+    "status": {
+      "type": "string",
+      "description": "Current payment status",
+      "enum": ["PENDING", "CLEARED", "FAILED", "REVERSED", "PARTIAL"]
+    },
+    "notes": {
+      "type": "string",
+      "description": "Optional notes or comments"
+    }
+  },
+  "additionalProperties": false
+}

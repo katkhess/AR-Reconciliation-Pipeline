@@ -1,0 +1,11 @@
+invoice_id,customer_id,order_date,due_date,line_items,total_amount,amount_paid,currency,status,notes
+INV-100001,CUST-1001,2024-01-05,2024-02-04,"[{""sku"": ""SKU-ALPHA001"", ""description"": ""Widget A"", ""quantity"": 10, ""unit_price"": 25.00}]",250.00,250.00,USD,PAID,
+INV-100002,CUST-1002,2024-01-08,2024-02-07,"[{""sku"": ""SKU-BETA0002"", ""description"": ""Gadget B"", ""quantity"": 5, ""unit_price"": 150.00}, {""sku"": ""SKU-BETA0003"", ""description"": ""Gadget C"", ""quantity"": 2, ""unit_price"": 75.00}]",900.00,450.00,USD,PARTIAL,Partial payment received
+INV-100003,CUST-1003,2024-01-10,2024-02-09,"[{""sku"": ""SKU-GAMM0001"", ""description"": ""Device G"", ""quantity"": 3, ""unit_price"": 500.00}]",1500.00,0.00,USD,OVERDUE,Payment overdue - follow up required
+INV-100004,CUST-1001,2024-01-12,2024-02-11,"[{""sku"": ""SKU-DELT0001"", ""description"": ""Component D"", ""quantity"": 20, ""unit_price"": 12.50}]",250.00,0.00,USD,OPEN,
+INV-100005,CUST-1004,2024-01-15,2024-02-14,"[{""sku"": ""SKU-EPSL0001"", ""description"": ""Module E"", ""quantity"": 1, ""unit_price"": 2500.00}]",2500.00,2500.00,USD,PAID,
+INV-100006,CUST-1002,2024-01-18,2024-02-17,"[{""sku"": ""SKU-ZETA0001"", ""description"": ""Assembly Z"", ""quantity"": 8, ""unit_price"": 45.00}]",360.00,360.00,USD,PAID,
+INV-100007,CUST-1005,2024-01-20,2024-02-19,"[{""sku"": ""SKU-PRMA0001"", ""description"": ""Premium Product A"", ""quantity"": 4, ""unit_price"": 350.00}]",1400.00,700.00,USD,PARTIAL,Second payment pending
+INV-100008,CUST-1003,2024-01-22,2024-02-21,"[{""sku"": ""SKU-BETA0002"", ""description"": ""Gadget B"", ""quantity"": 2, ""unit_price"": 150.00}]",300.00,0.00,USD,OPEN,
+INV-100009,CUST-1004,2024-01-25,2024-02-24,"[{""sku"": ""SKU-ALPHA001"", ""description"": ""Widget A"", ""quantity"": 50, ""unit_price"": 24.00}]",1200.00,1200.00,USD,PAID,Bulk order discount applied
+INV-100010,CUST-1005,2024-01-28,2024-02-27,"[{""sku"": ""SKU-GAMM0001"", ""description"": ""Device G"", ""quantity"": 1, ""unit_price"": 500.00}, {""sku"": ""SKU-DELT0001"", ""description"": ""Component D"", ""quantity"": 10, ""unit_price"": 12.50}]",625.00,0.00,USD,OPEN,New customer first order
