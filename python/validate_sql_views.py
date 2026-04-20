@@ -35,13 +35,13 @@ def table_or_view_exists(conn: sqlite3.Connection, name: str) -> bool:
         WHERE type IN ('table','view') AND name = ?
         LIMIT 1
         """,
-        (name,)
+        (name,),
     )
     return cur.fetchone() is not None
 
 def get_columns(conn: sqlite3.Connection, view_name: str) -> set[str]:
     cur = conn.execute(f"PRAGMA table_info({view_name});")
-    return {row[1] for row in cur.fetchall()}
+    return {row[1] for row in cur.fetchall()}  # row[1] = column name
 
 def scalar(conn: sqlite3.Connection, q: str) -> int:
     return int(conn.execute(q).fetchone()[0])
@@ -79,33 +79,31 @@ def main() -> int:
         if results != payments:
             raise RuntimeError(
                 f"Expected recon_results_active to have 1 row per payment: "
-                f"payments={{payments}}, recon_results_active={{results}}"
+                f"payments={payments}, recon_results_active={results}"
             )
 
         if needs_review > results:
             raise RuntimeError(
                 f"Expected recon_needs_review_active to be a subset of recon_results_active: "
-                f"needs_review={{needs_review}}, results={{results}}"
+                f"needs_review={needs_review}, results={results}"
             )
 
-        # Column check: ensure gap_amount exists
+        # Column check: ensure gap_amount exists (we use it for troubleshooting NO_CUTOFF_IN_WINDOW)
         cols = get_columns(conn, "recon_results_active")
         if "gap_amount" not in cols:
-            raise RuntimeError(
-                "Expected column gap_amount in recon_results_active (did you run the updated SQL?)."
-            )
+            raise RuntimeError("Expected column gap_amount in recon_results_active (did you run the updated SQL?).")
 
-        # Print match type distribution
+        # Print match type distribution (useful output for CI/logs)
         print("\nMatch type distribution:")
         for match_type, n in conn.execute(
             "SELECT match_type, COUNT(*) FROM recon_results_active GROUP BY match_type ORDER BY COUNT(*) DESC;"
         ).fetchall():
-            print(f"  {{match_type}}: {{n}}")
+            print(f"  {match_type}: {n}")
 
         print(
             "\nOK: SQL views validated.\n"
-            f"  DB: {{DB_PATH.relative_to(REPO_ROOT)}}\n"
-            f"  payments={{payments}}, results={{results}}, needs_review={{needs_review}}, summary_rows={{summary}}\n"
+            f"  DB: {DB_PATH.relative_to(REPO_ROOT)}\n"
+            f"  payments={payments}, results={results}, needs_review={needs_review}, summary_rows={summary}\n"
         )
         return 0
     finally:
