@@ -1,0 +1,18 @@
+# S3 Structure for AR Reconciliation Pipeline (Athena)
+#
+# Data bucket (external tables read from):
+#   s3://ar-reconciliation-project-katkhess/
+#
+# Athena query results bucket (workgroup output; separate on purpose):
+#   s3://kathessbucket/metadatahealthcare/athena-query-results/
+
+# External table locations (prefixes)
+s3://ar-reconciliation-project-katkhess/customers/   # customers.csv
+s3://ar-reconciliation-project-katkhess/invoices/    # invoices.csv
+s3://ar-reconciliation-project-katkhess/payments/    # payments.csv
+s3://ar-reconciliation-project-katkhess/returns/     # returns.csv
+s3://ar-reconciliation-project-katkhess/credits/     # credits.csv
+
+# Weekly snapshots (Parquet; written by Athena CTAS queries)
+s3://ar-reconciliation-project-katkhess/snapshots/recon_needs_review_history/      # 06e (detail), run_date=YYYY-MM-DD/
+s3://ar-reconciliation-project-katkhess/snapshots/recon_dashboard_summary_history/ # 06f (summary), run_date=YYYY-MM-DD/
