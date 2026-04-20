@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/
+
+# Generated data artifacts (pipeline outputs)
+data/raw/
+data/processed/
+
+# SQLite
+*.db
+*.sqlite
+
+# Local exports
+*.csv
+
+# Logs
+*.log
+
+# Jupyter
+.ipynb_checkpoints/
