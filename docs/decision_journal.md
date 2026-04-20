@@ -1,6 +1,6 @@
 # Decision Journal — AR Reconciliation Pipeline
 
-This journal captures the reasoning and iterations behind the AR reconciliation workflow. It is intentionally written in a narrative style for interview discussion (Problem → Hypothesis → Experiment → Result → Decision → Next step).
+This journal captures the reasoning and iterations behind the AR reconciliation workflow. 
 
 ## 2026-04-17 — Establish AWS/Athena workflow + weekly snapshots
 ### Problem
@@ -38,3 +38,22 @@ This journal captures the reasoning and iterations behind the AR reconciliation 
   - load raw CSVs into SQLite
   - create views recon_results_active / recon_needs_review_active / recon_dashboard_summary_active
   - export processed CSVs into data/processed for non-AWS reviewers
+
+  ## 2026-04-20 — Local-first pipeline mirrors Athena match_type classification
+### Problem
+- AWS/Athena logic works, but reviewers/interviewers shouldn’t need AWS access to validate the reconciliation approach.
+
+### Constraints
+- Must run fully locally in Codespaces.
+- Keep outputs consistent with Athena to avoid maintaining two different “truths.”
+
+### Decision
+- Made the local SQLite reconciliation payment-centric to match Athena:
+  - recon_results_active (payment-level classification)
+  - recon_needs_review_active (actionable subset)
+  - recon_dashboard_summary_active (counts by match_type)
+- Added a local config table (recon_config_active) to replicate Athena “scenario setters” (days_window, tolerance) without changing SQL.
+
+### Outcome
+- Local pipeline can generate raw CSVs, load SQLite, build views, and export CSV outputs that mirror Athena’s workflow and are Power BI/Excel friendly.
+

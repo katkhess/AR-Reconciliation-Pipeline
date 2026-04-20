@@ -16,3 +16,4 @@ All notable changes to this project will be documented in this file.
 
 ### Notes
 - Snapshot CTAS requires updating the run date in both the table name suffix (YYYY_MM_DD) and the S3 external_location folder (run_date=YYYY-MM-DD) before each weekly run.
+
