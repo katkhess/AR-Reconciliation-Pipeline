@@ -1,6 +1,13 @@
 # AR-Reconciliation-Pipeline
-# AR-Reconciliation-Pipeline
 End-to-end AWS data pipeline for automated AR reconciliation, handling SKU mismatches and complex payment mapping with Python and SQL.
+
+## Setup
+
+```bash
+python -m venv .venv
+source .venv/bin/activate   # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+```
 
 ## Local (SQLite) quickstart
 Run the full local workflow (data generation → SQLite load → reconciliation views → CSV exports):
@@ -28,3 +35,7 @@ This script:
 - Verifies expected row-count relationships (e.g., 1 row per payment in `recon_results_active`)
 - Checks required columns exist (e.g., `gap_amount`)
 - Prints a `match_type` distribution for quick sanity checking
+
+## CI
+
+The GitHub Actions workflow (`.github/workflows/ci.yml`) runs on every push and pull request. It installs dependencies and executes `python python/validate_sql_views.py` — the workflow fails if the validation script exits with a non-zero status.
