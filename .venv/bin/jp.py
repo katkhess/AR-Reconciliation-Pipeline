@@ -1,4 +1,4 @@
-#!/workspaces/AR-Reconciliation-Pipeline/.venv/bin/python3
+#!/home/runner/work/AR-Reconciliation-Pipeline/AR-Reconciliation-Pipeline/.venv/bin/python3
 
 import sys
 import json
