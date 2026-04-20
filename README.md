@@ -1,6 +1,31 @@
 # AR-Reconciliation-Pipeline
 End-to-end AWS data pipeline for automated AR reconciliation, handling SKU mismatches and complex payment mapping with Python and SQL.
 
+## One-command local run (Makefile)
+
+Run the entire local pipeline with a single command:
+
+```bash
+make local
+```
+
+This runs: **venv → install → generate → load → reconcile → validate**
+
+Individual targets:
+
+| Target | What it does |
+|--------|-------------|
+| `make venv` | Creates `.venv` (skipped if it already exists) |
+| `make install` | Installs deps from `requirements.txt` into `.venv` |
+| `make generate` | Generates synthetic raw CSVs in `data/raw/` |
+| `make load` | Loads raw CSVs into `data/processed/ar_recon.db` |
+| `make reconcile` | Builds reconciliation views and exports CSVs |
+| `make validate` | Validates SQL views and sanity-checks results |
+| `make local` | Runs all of the above in order |
+| `make clean` | Removes generated artifacts in `data/raw/` and `data/processed/` |
+
+> **Note:** All Python commands use `.venv/bin/python` to avoid interpreter mismatch.
+
 ## Setup
 
 ```bash
